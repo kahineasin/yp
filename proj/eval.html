@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0" />
+    <meta charset="utf-8" />
+    <title>resume</title>
+
+    <script language="javascript" src="/js/jq/jquery-1.8.0.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="/js/canvas/html2canvas.js" type="text/javascript"></script>
+
+    <script language="javascript" type="text/javascript">
+
+        $(document).ready(function() {
+
+            $("#goBtn").on("click", function(event) {
+            var s0 = $('#codeF').val();
+            console.info(s0);
+            var s2 = encodeURI(s0);
+            console.info(s2);
+            var s3 = encodeURIComponent(s0);
+            console.info(s3);
+                $.post('http://pay.sellgirl.com:28303/sample/eval?code=' + s3, null, function(data) {
+                    $('#answerF').val(data.data);
+                });
+            });
+        });
+    </script>
+
+    <style type="text/css">
+        .a4
+        {
+            margin: auto;
+            width: 210mm;
+            position: relative;
+            background-color: #eee;
+        }
+        table
+        {
+            margin: 2px 0px;
+            border: 1px solid #000;
+        }
+        table thead
+        {
+            height: 40px;
+            background-color: #aaa; /*注意背景颜色太浅的话打印时显示不出来*/
+        }
+        table thead tr td
+        {
+            border-bottom: 1px solid #aaa;
+            padding: 2px 4px;
+        }
+        table tbody tr td
+        {
+            /*text-align:center;*/
+        }
+        table tr td .label
+        {
+            display: inline-block;
+            width: 150px;
+        }
+        table tr td a
+        {
+            color: black;
+        }
+        table hr
+        {
+            border: 1px solid #aaa;
+            border-top: 0px;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        java的eval()函数实现 此程序可以根据对象类型不同，自动按照正确运算顺序调用对象的重载符号，程序可解释
+        +、-、*、&&、||、( ) 等多种运算，递归原理可解释任意长度的算式，还可自定义运算，扩展性强，下面测试：
+    </p>
+    <p>测试样例:</p>
+    <ul>
+    <li>"aa"+"bb"+33     
+    </li>
+    <li>3*(10+2)+2&&0   
+    </li>
+    </ul>
+    <p>
+        <input type="text" value="1+(2+15)*6" name="code" id="codeF" /></p>
+    <p>
+        <input type="button" value="计算" name="goBtn" id="goBtn" /></p>
+    <p>
+        <input type="text" value="" name="answer" id="answerF" readonly="readonly" /></p>
+</body>
+</html>
