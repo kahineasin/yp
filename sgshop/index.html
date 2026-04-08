@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>网站截图展示 | PC端 & 移动端 双轮播画廊</title>
+    <!-- Bootstrap 5 CSS (现代化样式 + 响应式栅格 + 轮播组件) -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 (免费图标库，美化控制按钮) -->
+    <link rel="stylesheet" href="/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f5 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Poppins', 'Roboto', sans-serif;
+            padding: 2rem 1rem;
+        }
+
+        /* 主容器宽屏舒适间距 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 页面头部 */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a2a3a, #2c5368);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .hero-section .sub {
+            color: #5a6e7c;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-weight: 400;
+            border-bottom: 2px solid rgba(44, 83, 104, 0.2);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        /* 分组卡片样式 */
+        .group-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+        }
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 40px -16px rgba(0,0,0,0.2);
+        }
+        .card-header-custom {
+            background: rgba(255,255,255,0.7);
+            padding: 1.2rem 1.5rem 0.8rem 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .card-header-custom h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1e2f3c;
+        }
+        .card-header-custom h2 i {
+            font-size: 1.8rem;
+            color: #2c7da0;
+        }
+        .card-header-custom p {
+            color: #4b6a7c;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        /* 轮播区域 */
+        .carousel-wrapper {
+            padding: 1.2rem 1rem 1.5rem 1rem;
+        }
+        /* 统一轮播图片样式：保证比例不变形，优雅展示截图 */
+        .carousel-inner img {
+            object-fit: contain;
+            width: 100%;
+            height: auto;
+            max-height: 460px;
+            background: #f0f2f5;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .carousel-inner img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        /* 确保轮播容器内部一致高度，防止抖动 */
+        .carousel-item {
+            background: #f8fafc;
+            border-radius: 20px;
+            text-align: center;
+            padding: 8px;
+        }
+        /* 轮播控制按钮 现代风格 */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 8%;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            background: transparent;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(30, 47, 60, 0.65);
+            border-radius: 50%;
+            padding: 18px;
+            background-size: 50%;
+            backdrop-filter: blur(2px);
+        }
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            opacity: 1;
+        }
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 6px;
+            background-color: #2c7da0;
+            opacity: 0.5;
+        }
+        .carousel-indicators .active {
+            background-color: #1f5068;
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        /* 响应式：移动端轮播图片高度适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.8rem;
+            }
+            .hero-section h1 {
+                font-size: 1.9rem;
+            }
+            .card-header-custom h2 {
+                font-size: 1.4rem;
+            }
+            .carousel-inner img {
+                max-height: 320px;
+                border-radius: 16px;
+            }
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon {
+                padding: 12px;
+                background-size: 50%;
+            }
+            .group-card {
+                border-radius: 1.5rem;
+            }
+        }
+        /* 小手机进一步优化 */
+        @media (max-width: 480px) {
+            .carousel-inner img {
+                max-height: 260px;
+            }
+        }
+
+        /* 模态框全屏样式增强 (配合modal-fullscreen-md-down) */
+        .modal-fullscreen-md-down .modal-dialog {
+            margin: 0;
+        }
+        .modal-content {
+            background: rgba(0,0,0,0.92);
+            border: none;
+            border-radius: 0;
+        }
+        .modal-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-body img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+        }
+        /* 手机横屏下全屏舒服 */
+        @media (max-width: 767.98px) {
+            .modal-body img {
+                max-height: 85vh;
+            }
+            .btn-close-white {
+                filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+            }
+        }
+        /* 自定义指示器/按钮精致 */
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #6c86a0;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 2rem;
+        }
+        .badge-tech {
+            background: #e9ecef;
+            color: #2c5368;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- 页面头部介绍 -->
+    <div class="hero-section">
+        <h1><i class="fas fa-laptop-code me-2"></i>电子书购物站展示</h1>
+        <div class="sub"></div>
+        <div class="mt-3">
+            <span class="badge-tech"><i class="fas fa-desktop"></i> PC端界面 (6张)</span>
+            <span class="badge-tech ms-2"><i class="fas fa-mobile-alt"></i> 手机端界面 (6张)</span>
+        </div>
+    </div>
+
+    <!-- 两列分组展示：PC端截图组 + 手机端截图组 (响应式栅格) -->
+    <div class="row g-4">
+        <!-- PC端 截图轮播组 -->
+        <div class="col-12 col-md-6">
+            <div class="group-card">
+                <div class="card-header-custom">
+                    <h2><i class="fas fa-desktop"></i> PC端 桌面视图</h2>
+                    <p>宽屏响应式布局 · 高清网页截图 · 点击任意图片放大预览</p>
+                </div>
+                <div class="carousel-wrapper">
+                    <!-- 动态PC轮播容器 -->
+                    <div id="carouselPC" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+                        <!-- 轮播内容将由js动态生成，保证结构和图片列表一致性 -->
+                        <div class="carousel-inner" id="pcCarouselInner"></div>
+                        <!-- 轮播指示器动态生成 -->
+                        <div class="carousel-indicators" id="pcIndicators"></div>
+                        <!-- 控制按钮 -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPC" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">上一张</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPC" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">下一张</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 手机端 截图轮播组 -->
+        <div class="col-12 col-md-6">
+            <div class="group-card">
+                <div class="card-header-custom">
+                    <h2><i class="fas fa-mobile-alt"></i> 移动端 手机视图</h2>
+                    <p>完美适配iOS/Android · 触控滑动轮播 · 全屏沉浸式浏览</p>
+                </div>
+                <div class="carousel-wrapper">
+                    <div id="carouselPhone" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+                        <div class="carousel-inner" id="phoneCarouselInner"></div>
+                        <div class="carousel-indicators" id="phoneIndicators"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPhone" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">上一张</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPhone" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">下一张</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-images"></i> 单击任意截图开启高清全屏模式 · 双轮播自动播放 · 支持手势滑动
+    </footer>
+</div>
+
+<!-- 放大图模态框 (全屏特效 - 手机端全屏，PC端优雅居中大图) Bootstrap 5 模态框，带fullscreen-md-down实现移动全屏) -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+        <div class="modal-content bg-dark bg-opacity-95">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center p-0">
+                <img id="modalLargeImage" src="" alt="高清截图" class="img-fluid">
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <small class="text-white-50"><i class="fas fa-hand-pointer"></i> 点击外部或关闭按钮返回</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/css/bootstrap.bundle.min.js"></script>
+<script>
+    (function() {
+        // 图片配置: PC端图片列表 (pc01.jpg ~ pc06.jpg)
+        const pcImages = [
+            "pc01.jpg", "pc02.jpg", "pc03.jpg",
+            "pc04.jpg", "pc05.jpg", "pc06.jpg"
+        ];
+        // 手机端图片列表 (phone01.jpg ~ phone06.jpg)
+        const phoneImages = [
+            "phone01.jpg", "phone02.jpg", "phone03.jpg",
+            "phone04.jpg", "phone05.jpg", "phone06.jpg"
+        ];
+
+        // 辅助函数：生成轮播图inner HTML (items) 和 指示器 HTML
+        // 参数: imagesArr (图片名数组), carouselId (唯一标识,用于指示器的data-bs-target)
+        // 返回: { innerHtml, indicatorsHtml }
+        function generateCarouselContent(imagesArr, carouselId) {
+            let innerHtml = '';
+            let indicatorsHtml = '';
+            for (let i = 0; i < imagesArr.length; i++) {
+                const imgSrc = imagesArr[i];
+                const activeClass = i === 0 ? 'active' : '';
+                // 构建item (添加点击放大特性，将在事件委托中处理)
+                innerHtml += `
+                    <div class="carousel-item ${activeClass}">
+                        <img src="${imgSrc}" class="d-block w-100" alt="网站截图 ${imgSrc}" loading="lazy">
+                    </div>
+                `;
+                // 构建指示器按钮
+                const indicatorActive = i === 0 ? 'active' : '';
+                indicatorsHtml += `
+                    <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" class="${indicatorActive}" aria-current="${i === 0 ? 'true' : 'false'}" aria-label="Slide ${i+1}"></button>
+                `;
+            }
+            return { innerHtml, indicatorsHtml };
+        }
+
+        // 渲染PC端轮播
+        function renderPC() {
+            const pcInner = document.getElementById('pcCarouselInner');
+            const pcIndicators = document.getElementById('pcIndicators');
+            if (pcInner && pcIndicators) {
+                const { innerHtml, indicatorsHtml } = generateCarouselContent(pcImages, 'carouselPC');
+                pcInner.innerHTML = innerHtml;
+                pcIndicators.innerHTML = indicatorsHtml;
+            }
+        }
+
+        // 渲染手机端轮播
+        function renderPhone() {
+            const phoneInner = document.getElementById('phoneCarouselInner');
+            const phoneIndicators = document.getElementById('phoneIndicators');
+            if (phoneInner && phoneIndicators) {
+                const { innerHtml, indicatorsHtml } = generateCarouselContent(phoneImages, 'carouselPhone');
+                phoneInner.innerHTML = innerHtml;
+                phoneIndicators.innerHTML = indicatorsHtml;
+            }
+        }
+
+        // 初始化轮播组件 (手动启用，确保data-bs-ride和自动播放生效，同时防止冲突)
+        function initCarousels() {
+            // 获取两个轮播原生元素，实例化Bootstrap Carousel，保留自动轮播等特性
+            const pcCarouselElement = document.getElementById('carouselPC');
+            const phoneCarouselElement = document.getElementById('carouselPhone');
+            
+            if (pcCarouselElement) {
+                // 如果已有实例则先销毁? 但初次无实例，直接创建，配置自动播放且连续滚动，同时触摸滑动默认支持
+                new bootstrap.Carousel(pcCarouselElement, {
+                    interval: 4000,      // 自动轮播间隔4秒
+                    wrap: true,          // 循环播放
+                    touch: true,         // 支持触摸滑动
+                    pause: 'hover'       // 鼠标悬停暂停（移动端忽略hover效果不影响触摸）
+                });
+            }
+            if (phoneCarouselElement) {
+                new bootstrap.Carousel(phoneCarouselElement, {
+                    interval: 4000,
+                    wrap: true,
+                    touch: true,
+                    pause: 'hover'
+                });
+            }
+        }
+
+        // 全局图片点击放大功能（模态框显示原图，手机全屏由modal-fullscreen-md-down类自动控制）
+        function initZoomModal() {
+            const modalElement = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalLargeImage');
+            if (!modalElement || !modalImg) return;
+            
+            // 由于轮播图片是动态生成的，使用事件委托监听整个document上的点击，但限定目标为.carousel-item img
+            document.body.addEventListener('click', function(e) {
+                // 获取实际点击的目标元素，向上查找是否是img且位于carousel-item内
+                let target = e.target;
+                let isCarouselImg = false;
+                let imgSrc = null;
+                
+                // 检测是否点击在图片上并且图片父级包含carousel-item (轮播内图片)
+                if (target && target.tagName === 'IMG') {
+                    // 检查是否在 .carousel-item 内部 (确保只对轮播图片生效)
+                    const parentItem = target.closest('.carousel-item');
+                    if (parentItem && (parentItem.closest('#carouselPC') || parentItem.closest('#carouselPhone'))) {
+                        isCarouselImg = true;
+                        imgSrc = target.getAttribute('src');
+                    }
+                }
+                
+                if (isCarouselImg && imgSrc) {
+                    e.preventDefault();
+                    // 设置模态框图片源
+                    modalImg.src = imgSrc;
+                    // 获取bootstrap模态框实例并展示
+                    const bsModal = bootstrap.Modal.getInstance(modalElement);
+                    if (bsModal) {
+                        bsModal.show();
+                    } else {
+                        // 若没有实例则新建
+                        const newModal = new bootstrap.Modal(modalElement, {
+                            backdrop: 'static',  // 点击背景可关闭但保留关闭按钮
+                            keyboard: true
+                        });
+                        newModal.show();
+                    }
+                }
+            });
+        }
+        
+        // 可选: 针对动态加载图片添加占位错误处理，当图片不存在时给友好提示但不影响体验（更优雅）
+        function handleImageErrors() {
+            // 监听所有轮播内图片的error事件，防止破图影响美观，替换为占位符（但用户确信图片存在，仅做备用）
+            document.body.addEventListener('error', function(e) {
+                const img = e.target;
+                if (img && img.tagName === 'IMG' && (img.closest('#carouselPC') || img.closest('#carouselPhone'))) {
+                    // 如果图片加载失败，使用一个优雅的在线占位图表示截图缺失，但原路径用户应该提供实际截图
+                    // 由于用户有具体截图，不破坏演示体验，但为了安全不干扰展示，只替换一个本地base64 或 文字提示？
+                    // 更柔和：添加一个临时灰色背景 + 提示文字。因为用户后期替换真实图片，不影响。
+                    if (!img.getAttribute('data-error-handled')) {
+                        img.setAttribute('data-error-handled', 'true');
+                        // 用svg占位符保留比例
+                        img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="%23e2e8f0"%3E%3Crect width="100%25" height="100%25" fill="%23cbd5e1"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="16" fill="%2347566b"%3E截图加载失败%0A请检查图片路径%3C/text%3E%3C/svg%3E';
+                    }
+                }
+            });
+        }
+
+        // 添加额外平滑效果与辅助提示，保证在模态框关闭时重置图片源避免延迟闪烁
+        const modalContainer = document.getElementById('imageModal');
+        if (modalContainer) {
+            modalContainer.addEventListener('hidden.bs.modal', function () {
+                const modalImgElem = document.getElementById('modalLargeImage');
+                if (modalImgElem) {
+                    // 不立即清空src避免闪烁，但重置备用
+                    // 可选延迟清除，但保留原图下次打开更快，不用特意清除。
+                }
+            });
+        }
+
+        // 因为使用了轮播图渐隐特效 carousel-fade，额外确保首次加载时轮播指示器正确同步。
+        // 渲染 & 初始化
+        renderPC();
+        renderPhone();
+        
+        // 确保动态内容完全插入DOM后再初始化carousel实例以及图片点击事件
+        setTimeout(() => {
+            initCarousels();
+            initZoomModal();
+            handleImageErrors();
+            // 额外添加保险：因为轮播指示器动态生成后需要与轮播控件联动，bootstrap carousel 初始化时自动绑定
+            // 如果图片数量差异, 确保carousel指示器点击正常
+        }, 50);
+        
+        // 解决页面完全加载后再重新校正一次（如果图片多加载延迟导致高度问题）
+        window.addEventListener('load', function() {
+            // 重新校正所有轮播活动状态，保证展示稳定
+            const pcActiveImg = document.querySelector('#carouselPC .carousel-item.active img');
+            const phoneActiveImg = document.querySelector('#carouselPhone .carousel-item.active img');
+            // 确保没有active缺失（渲染时已做active，但以防万一）
+            if (!pcActiveImg) {
+                const firstItem = document.querySelector('#carouselPC .carousel-item');
+                if (firstItem) firstItem.classList.add('active');
+            }
+            if (!phoneActiveImg) {
+                const firstItem = document.querySelector('#carouselPhone .carousel-item');
+                if (firstItem) firstItem.classList.add('active');
+            }
+            // 手动刷新指示器状态：不用干预，BS 自动管理。
+            // 优雅展示滚动
+        });
+    })();
+</script>
+</body>
+</html>
